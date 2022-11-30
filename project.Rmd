@@ -3,8 +3,8 @@ title: "Develop a data mining pipeline using R language comparing two models pre
 author: "Sushmitha Tharla & Shravya Rani Damarapelli"
 date: '2022-11-29'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
 

@@ -11,7 +11,7 @@
 
 <meta name="author" content="Sushmitha Tharla &amp; Shravya Rani Damarapelli" />
 
-<meta name="date" content="2022-11-08" />
+<meta name="date" content="2022-11-29" />
 
 <title>Develop a data mining pipeline using R language comparing two models precision</title>
 
@@ -366,7 +366,7 @@ pre code {
 <h1 class="title toc-ignore">Develop a data mining pipeline using R
 language comparing two models precision</h1>
 <h4 class="author">Sushmitha Tharla &amp; Shravya Rani Damarapelli</h4>
-<h4 class="date">2022-11-08</h4>
+<h4 class="date">2022-11-29</h4>
 
 </div>
 
@@ -644,8 +644,8 @@ print(rf)</code></pre>
 ##                      Number of trees: 500
 ## No. of variables tried at each split: 1
 ## 
-##           Mean of squared residuals: 264878103604
-##                     % Var explained: 13.63</code></pre>
+##           Mean of squared residuals: 265126408965
+##                     % Var explained: 13.54</code></pre>
 <p>Here also we will derive the statistical values as RMSE, MAE and
 <span class="math inline">\(R^2\)</span> for Random Forest Model.</p>
 <pre class="r"><code>y_pred = predict(rf, newdata = dat[,c(-1)])
@@ -658,24 +658,24 @@ RMSE&lt;-sqrt(sum((e_rf))/n)
 MAE&lt;-(sum(sqrt(e_rf)))/n
 cbind(RMSE,MAE)</code></pre>
 <pre><code>##          RMSE      MAE
-## [1,] 470426.6 398771.3</code></pre>
+## [1,] 470914.5 399256.1</code></pre>
 <pre class="r"><code>SSR_rf&lt;-sum((y_pred-(Y_train))^2)
 SST_rf&lt;-sum((Y_train-mean(Y_train))^2)</code></pre>
 <p>p-value from F-statistics in random forest model is,</p>
 <pre class="r"><code>F0_rf&lt;-(SSR_rf/k)/(SSE_rf)
 pf(F0_rf,5,n-p)</code></pre>
-<pre><code>## [1] 7.864866e-22</code></pre>
+<pre><code>## [1] 7.809979e-22</code></pre>
 <p>Thus the model is significant.</p>
 <p>Thus the standard error for random forest model is square root of
 mean of squared residuals which is</p>
 <pre class="r"><code>error_rf&lt;-sqrt(rf$mse[500])
 error_rf</code></pre>
-<pre><code>## [1] 514663.1</code></pre>
+<pre><code>## [1] 514904.3</code></pre>
 <p><span class="math inline">\(R^{2}\)</span> for random regression
 model.</p>
 <pre class="r"><code>R2&lt;-rf$rsq[500]
 R2</code></pre>
-<pre><code>## [1] 0.1362578</code></pre>
+<pre><code>## [1] 0.1354481</code></pre>
 <p><span class="math inline">\(R^{2}\)</span> value of 0.136 also
 indicate that in contrary to multiple linear regression model 13% of
 variances in the dependent variables are explained by independent
