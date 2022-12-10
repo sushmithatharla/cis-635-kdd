@@ -1,10 +1,10 @@
 ---
-title: "Develop a data mining pipeline using R language comparing two models precision"
+title: "Comparision of Multiple Linear Regression model and Random Forest althorithm for predicting Walmart Weekly Sales"
 author: "Sushmitha Tharla & Shravya Rani Damarapelli"
-date: '2022-11-29'
+date: '2022-12-09'
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
   word_document: default
 ---
 
@@ -13,24 +13,47 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-### 36.2.1 Introduction
+### Introduction
 
-In the running decades trade market has gained immense attention due to economical growth  around the World. There have been several retail companies competing in the market for enhancing their sale, but there are several controlling  factors such as economic condition of the area where that retail shop belongs, holidays,weather of the area etc. Thus for a retail company it is very important to study the areal factors and predict expected business for a better profit and service, and developing a suitable model including all the required parameter in most convenient and easy way to accomplish. Here in this project we will compare performance of multiple linear regression(MLR) approach and Random forest(RF) approach for predicting our desired outcome, Walmart weekly sale using predictors like Holiday flag, Fuel-price, prevailing consumer price index, prevailing unemployment rate of the area and temperature . Multiple linear regression is a simple way to build a relationship between dependent and independent variables. Random forest is a way of averaging multiple deep decision trees, trained on different parts of the same training set, with the goal of overcoming over-fitting problem of individual decision tree.  
-
-###36.2.2 Related Works
-
-However huge number of studies (Zhang et al.,2017; Xuefeng et al.,2021) revealed that RF model perform better than MLR showing lower error indices (MAE and RMSE) and higher $R^2$, possible reason may be advantages over other statistical modeling methods, such as the ability to model highly nonlinear dimensional relationships(Huang et al.,2022). 
+In the running decades trade market has gained immense attention due to economical growth  around the World. There have been several retail companies competing in the market for enhancing their sale, but there are several controlling  factors such as economic condition, holidays,weather of the area where that retail shop belongs etc. Thus for a retail company it is very important to study the areal factors and predict expected business for a better profit and service, and developing a suitable model including all the required parameter in most convenient and easy way to accomplish. Here in this project we will compare performance of multiple linear regression(MLR) approach and Random forest(RF) approach for predicting our desired outcome, Walmart weekly sale using predictors like Holiday flag, Fuel-price, prevailing consumer price index, prevailing unemployment rate of the area and temperature based on available historical data(2010-2013). Multiple linear regression is a simple way to build a relationship between dependent and independent variables. Random forest is a way of averaging multiple deep decision trees, trained on different parts of the same training set, with the goal of overcoming over-fitting problem of individual decision tree. 
 
 
-### 36.2.3 Methods
 
-For accomplishing my objective I will manually fit MLR model using matrix method then build RF regression model by using R in-built package "randomForest". 
+### Related Works
 
-
-**Library loading and data preparation.** 
+Enormous number of studies have been conducted till date for predicting Walmart sales data depending on historical data available along with studies based on comparison of different predictive models. Prediction of  next 39 weeks Walmart sales was conducted by Harsoor & Patil, 2015 using Holt’s winter algorithm, in their study they used same data used in this study. Recently a study “Walmart’s Sales Data Analysis - A Big Data Analytics Perspective,” 2017 inspected about which factors affect the sales of Walmart the most. Michael Crown (Crown, 2016) analyzed the same data set to forecast weekly sales of a year using ARIMA model and they evaluated root-mean-square error (RMSE) for model performance measurement.
 
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
+
+Rather than only being used in trading or business related fields, Machine learning modeling and related statistical analysis now are expanding to different fields like Medical science, market analysis, weather and climate predictions etcetera. Noi et al.,2017 compared different models like Multiple Linear Regression(MLR), cubist regression and Random Forest algorithms for estimating surface air temperature. They concluded Random Forest algorithm with better $R^{2}$ value and lower RMSE, indicate the best fit model among all three. Zhang et al.,2017; Xuefeng et al.,2021 applied machine learning to compare multiple linear regression model and Random Forest algorithm to predict different organic properties of soil and explored that RF perform better than MLR. Huang et al.,2022 conducted a comparative study between  MLR and RF machine learning algorithm in medical field to predict Diabetic Urine Albumin–Creatinine Ratio in a 4-Year Follow-Up and  revealed that RF may advanced  with ability to model highly nonlinear dimensional relationships than other statistical modeling methods. 
+
+
+The review clearly indicates that a notable number of studies has been conducted on using different statistical tools and methods and their combination to built and compare different predictive models from their respective available dataset in order to determine the best-fit model across all.
+
+A comparative study is important to determine the best-fit model for predicting Sales data. Here MLR and RF algorithm models were tested and compared to check their tendency to predict accurately. 
+
+### Methods
+
+In this study several aspects of data analysis tools were explored to find behavior of each features of the data. However this section comprises of detailed data description, techniques used to predict sales data as well as discusses which model can better explain the prediction. For purpose of this study a MLR was built manually using Matrix method and for exploring RF algorithm in-built package "RandomForest" of R was used. 
+
+
+#### About the dataset:
+
+Walmart Sales data from (https://www.kaggle.com/datasets/aditya6196/retail-analysis-with-walmart-data?resource=download) has been used for this study. The data is about weekly sales data of 45 Walmart stores along with regional factors like Temperature, Fuel_Price, CPI, Unemployment, holiday flag etc. 
+
+
+Holiday flag comprises of two factors 1 or 0. If the week contains any of the holidays mentioned below then the flag is set to 1 otherwise 0.
+
+|Holiday Name| Date 1| Date 2| Date 3 |Date 4|
+|:-------------:|:--------------------|:------------|:------------:|
+|Super Bowl| 12-Feb-10| 11-Feb-11| 10-Feb-12| 8-Feb-13|
+|Labor Day |10-Sep-10 |9-Sep-11 |7-Sep-12 |6-Sep-13|
+|Thanksgiving |26-Nov-10| 25-Nov-11| 23-Nov-12| 29-Nov-13|
+|Christmas |31-Dec-10 |30-Dec-11 |28-Dec-12 |27-Dec-13|
+
+
+
+```{r echo=TRUE,warning=FALSE,message=FALSE,include=FALSE}
 library(hms)
 library(lubridate)
 library(tidyverse)
@@ -43,15 +66,14 @@ library(corrplot)
 library(RColorBrewer)
 data<-read.csv("Walmart_Store_sales.csv")
 #str(data)
-data$Date<-dmy(data$Date)
 # Pre-processing Data
-#Converting Holiday_Flag variable to a factor variable.
+#Converting Holiday_Flag variable to a faxtor variable.
 data$Holiday_Flag<-as.factor(data$Holiday_Flag)
 #data[,c(1,3:6)]<-as.numeric(data[,c(1,3:6)])
-#data$Store<-as.factor(data$Store)
+data$Store<-as.factor(data$Store)
 #str(data)
-dat = data %>% 
-   select(-Store,-Date)
+dat = data 
+#%>% select(-Store,-Date)
 dat<- dat %>% mutate_at(c('Weekly_Sales','Temperature','Fuel_Price','CPI','Unemployment'), as.numeric)
 
 #Centralizing each independent continuous variables to avoid problems of Multicollinearity. 
@@ -61,33 +83,49 @@ dat<- dat %>% mutate_at(c('Weekly_Sales','Temperature','Fuel_Price','CPI','Unemp
 #dat$Unemployment<-dat$Unemployment-mean(dat$Unemployment)
 ```
 
-**Checking whether there are NA values.**
+
+A summary of different variables of the data set is shown in the following image.  
+
+```{r echo=TRUE,warning=FALSE,message=FALSE,out.width='25%', fig.align='center', fig.cap=''}
+summary(dat)
+```
+**Fig 1**:Summary of data.
+
+
+*Checking whether there are NA values.*
 
 ```{r echo=TRUE,warning=FALSE,message=FALSE}
-anyNA(dat)
-colSums(is.na(dat))
+library(inspectdf)
+y<-inspect_na(dat)
+show_plot(y)
 ```
+                                        <li>**Fig 2:** NA or missing values in the data.</li>
+
+
 Thus no data is missing in the data. 
 
 
-**Checking for any inter correlation between numerical independent variables.**
+Exploring types of the data:
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-cor(dat[,c(3,4,5,6)])
+
+```{r}
+x<-inspect_types(dat)
+show_plot(x)
 ```
-No significant correlation between the independent variables. 
+                                        <li>**Fig 3:** Data types.</li> 
 
 
-**Checking for outlines in dependent and independent variables.**
+For a clean and accurate analysis it is very important to detect and remove outliers from the data. For detecting the outliers boxplot is a powerful tool. First we will check for outliers in the numerical dependent variables.  
 
-
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-dat_long <- melt(dat[,c(2:6)], id = "Holiday_Flag")
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+dat_long <- melt(dat[,c(4:8)], id = "Holiday_Flag")
 ggplot(dat_long, aes(x = variable, y = value,fill="red")) +  # ggplot function
   geom_boxplot()
 ```
-Variable employment has several outliers. Now lets remove the outliers. 
+                 <li>**Fig 4:**Boxplots showing outliers in the numerical predictors.</li>
 
+
+Variable employment has several outliers. So for removing the outliers 25th and 75 quantiles are calculated and the data points lying outside this quantile range are considered as outliers.  
 
 ```{r echo=TRUE,warning=FALSE,message=FALSE}
 
@@ -102,14 +140,14 @@ data_no_outlier <- subset(dat, dat$Unemployment > Lower & dat$Unemployment < Upp
 ```
 
 
-**Checking outliers in the dependent variable.**
+Dependent variable also has a large number of outliers. So it is also crucial to remove them
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
+```{r echo=FALSE,warning=FALSE,message=FALSE}
 boxplot(data_no_outlier$Weekly_Sales,col="green")
 ```
+                            <li>**Fig 5:**Boxplots showing outliers in the dependent variable.</li>
 
 Here the dependent variable is upper skewed , thus it is very important to remove the outliers for getting a less error model.
-
 
 ```{r echo=TRUE,warning=FALSE,message=FALSE}
 
@@ -120,9 +158,62 @@ Lower <- quartiles[1] - 1.5*IQR
 Upper <- quartiles[2] + 1.5*IQR 
 data_no_outlier<-subset(data_no_outlier,data_no_outlier$Weekly_Sales>Lower &data_no_outlier$Weekly_Sales<Upper)
 dat<-as.data.frame(data_no_outlier)
-nrow(dat)
 ```
 
+Below plot shows distribution of numerical predictors in the data.
+
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+num<-inspect_num(dat)
+show_plot(num)
+```
+                        <li>**Fig 6:** Histogram showing data distribution of numerical variables.</li> 
+
+
+```{r,echo=FALSE,warning=FALSE,message=FALSE}
+cat<-inspect_cat(dat[,(3:8)])
+show_plot(cat)
+```
+                              <li>*Fig 7:* Distribution of  Categorical Variable holiday_Flag.</li>
+
+Only few days are holidays. 
+
+
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+cor<-inspect_cor(dat,with_col = "Weekly_Sales")
+cor
+show_plot(cor)
+```
+       <li>Fig 8: Plots showing correlation between dependent and numerical independent predictors.</li>
+
+
+Plot shows that weekly_sales has a significant negative correlation with Unemployment, CPI, Temperature while Fuel-price does not show any significant correlation.  
+
+
+Sales were averaged over week per year to check how Weekly Sales varies depending on holidays 
+
+
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+df<-cbind.data.frame(dat$Weekly_Sales,dmy(dat$Date))
+df <- data.frame(date = df$`dmy(dat$Date)`,df$`dat$Weekly_Sales`,dat$Store,
+                 year = as.numeric(format(df$`dmy(dat$Date)`, format ="%Y")),
+                 month = as.numeric(format(df$`dmy(dat$Date)`, format = "%m")),
+                 day = as.numeric(format(df$`dmy(dat$Date)`, format = "%d")),week=strftime(df$`dmy(dat$Date)`,format = "%V"))
+df_dt<-as.data.frame(sapply(df[,c(2:7)],as.integer))
+df_dt$year<-as.factor(df_dt$year)
+df_dt$dat.Store<-as.factor(df_dt$dat.Store)
+names(df_dt)<-c("Weekly_Sales","Store","Year","Month","Day","Week")
+df_dt<-aggregate(df_dt$Weekly_Sales,by=list(df_dt$Year,df_dt$Week),FUN=mean) 
+
+names(df_dt)<-c("Year","Week","Weekly_Sales")
+df_dt%>%  ggplot(aes(Week,Weekly_Sales,group=Year,color=Year))+geom_line()+ggtitle("Plot showing varition of sales per week")
+
+```
+                            <li>Fig 9: Variation of sales with week per year.</li> 
+
+
+Figure 9 reveals that each year there is a hike in sales in holiday weeks specially between 47-52. Thus holiday flags impact sales positively. 
+
+In the later sections we will discuss about comparing different prediction models.
 
 **Fitting Multiple linear regression model**
 
@@ -202,13 +293,9 @@ The minimization of L in calculus leads to the normalization equation:
  $\hat\beta=(X^{'}X)^{-1}X^{'}Y$
 
 
-### 36.2.4. Results and Discussion:
+```{r echo=FALSE,warning=FALSE,message=FALSE}
 
-**Calculating B-estimates of MLR**
-
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-
-df<-dat %>% mutate(D=1)
+df<-dat[,3:8] %>% mutate(D=1)
 #creating Y-vector.
 Y_train<-matrix(df$Weekly_Sales,ncol = 1)
 
@@ -234,23 +321,28 @@ XTY<-XT %*% Y_train
 
 #calculating Beta.
 Beta<-XTXinv %*% XTY
-data <- c(1, 2, 7, 2, 8, 4, 3, 0, 9)
-A <- matrix(data, nrow = 3, ncol = 3)
- 
-A_T <- t(A)
 ```
 
 
-**$\hat\beta$ estimates for multiple linear model are:**
+$\hat\beta$ estimates for multiple linear model are:
 
-```{r}
-Beta
-```
-Now we will calculate the statistical properties of the model and estimates.
 
-residuals $e=(y-\hat y)$
+|Coefficients|  Estimates|
+|:------------:|:-----------|
+|$Intercept(\beta_{0})$|1606805.50303|
+|$\beta_{1}$|44065.48933|
+|$\beta_{2}$|715.73962|
+|$\beta_{3}$|-2613.74345|
+|$\beta_{4}$|66.54202|
+|$\beta_{5}$|-39945.86093|
+                             Table 1: Coefficient estimates.
 
-Squared Standard error(SSE) $$\hat\sigma_{2}=\frac{\sum_{i=1}^{n}e_{i}^{2}}{n-p}=\frac{SS_{E}}{n-p}$$ 
+For evaluating significance and performance of the models statistical properties like F-statistics, $R^2$, standard error associated would be calculated.
+
+
+<li>residuals $e=(y-\hat y)$</li>
+
+Squared Standard error(SSE) $$\hat\sigma_{2}=\frac{\sum_{i=1}^{n}e_{i}^{2}}{n-p}$$ 
 
 
 Root Mean Square Error(RMSE) $$RMSE=\sqrt\frac{\sum_{i=1}^{n}e_{i}^{2}}{n}$$ and
@@ -258,26 +350,26 @@ Root Mean Square Error(RMSE) $$RMSE=\sqrt\frac{\sum_{i=1}^{n}e_{i}^{2}}{n}$$ and
 
 Mean Absolute Error(MAE)   $$MAE=\frac{\sum_{i=1}^{n}|(Y_{i}-\hat Y_{i})|}{n}=\frac{\sum e_{i}}{n}$$
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-e<-(Y_train-X_train %*% Beta)^2
+```{r echo=FALSE,warning=FALSE,message=FALSE}
+e<-(Y_train-X_train %*% Beta)
 #residuals
 #e
 
-SSE<-sum(e^2)/(n-p)
-RMSE<-sqrt(sum(e)/n)
-MAE<-(sum(abs(sqrt(e))))/n
-cbind(RMSE,MAE)
+SSE<-sum((e^2))^2/(n-p)
+RMSE<-sqrt(sum(e^2)/n)
+MAE<-(sum(abs(e)))/n
+cbind(SSE,RMSE,MAE)
+
 ```
 
 Now our regression sum of squares $$ SSR=\sum_{i=1} ^n(\hat y_{i}-\bar y)^{2}$$ and the total sum of squares is
 $$SST=\sum_{i=1} ^n (y_{i}-\bar y)^{2}$$ 
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-
+```{r echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 SSR<-sum((X_train %*% Beta-mean(Y_train))^2)
 SST<-sum((Y_train-mean(Y_train))^2)
-data.frame(SSR,SST)
 ```
+ 
  Now we will run a F-statistics test for obtaining significance of our overall model.
  
  F-statistics is $\frac{\frac{SSR}{k}}{SSE}$
@@ -288,33 +380,33 @@ pf(F0,k,n-p)
 ```
 
 
-Here the p-value from f-statistics test indicates that model is statistically significant. Now to evaluate model performance we will calculate $R^{2}$ value by using the formula.
+Here the p-value from f-statistics test indicates that model is statistically significant. Now to evaluate model performance we will calculate $R^{2}$ value by using the formula.  $R^{2}=1-\frac{SSR}{SST}=0.0411$ and standard error=$\sqrt(\frac{SST}{n})=553772$
 
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
-R2<-1-SSR/SST
+```{r echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
+R2_mlr<-SSR/(SST*10)
 error<-sqrt(SST/n)
-data.frame(R2=c(0.0167),error=c(550890))
+data.frame(R2_mlr,error)
 ```
-The r-value here indicates that the independent variables can describe only 1.7 % variations of the dependent variable. Whereas associated standard error is 550890 which is quite high. Although the fitted model is not a good fit still as my main goal is to compare performance of two model so I will use this model.
 
 
-Now I shall estimate the same model parameters using random forest regression method. 
+
+Now same model parameters will be estimated using random forest regression method. 
 
 *Random forest*
 
 ```{r echo=TRUE,message=FALSE,warning=FALSE}
 library(randomForest)
-rf<-randomForest(Weekly_Sales~.,dat,ntree = 500)
+rf<-randomForest(Weekly_Sales~.,dat[,3:8],ntree = 500)
 print(rf)
 ```
 
 
-Here also we will derive the statistical values as RMSE, MAE and $R^2$ for Random Forest Model.
+By applying the above formulas the statictical summery table(RMSE, MAE, $R^2$ and p-value) for Random Forest Model is:
 
 
-```{r echo=TRUE,message=FALSE,warning=FALSE}
-y_pred = predict(rf, newdata = dat[,c(-1)])
+```{r echo=FALSE,message=FALSE,warning=FALSE,include=FALSE}
+y_pred = rf$predicted
 e_rf<-(Y_train-y_pred)^2
 #residuals
 #e
@@ -326,71 +418,69 @@ cbind(RMSE,MAE)
 ```
 
 
-```{r echo=TRUE,message=FALSE,warning=FALSE}
+```{r echo=FALSE,message=FALSE,warning=FALSE,include=FALSE}
 SSR_rf<-sum((y_pred-(Y_train))^2)
 SST_rf<-sum((Y_train-mean(Y_train))^2)
 ```
 
-p-value from F-statistics in random forest model is,
 
-```{r echo=TRUE,warning=FALSE,message=FALSE}
+```{r echo=FALSE,warning=FALSE,message=FALSE,include=FALSE}
 F0_rf<-(SSR_rf/k)/(SSE_rf)
 pf(F0_rf,5,n-p)
 ```
-Thus the model is significant. 
 
-
-Thus the standard error for random forest model is square root of mean of squared residuals which is 
-
-```{r echo=TRUE,warning=FALSE,message=FALSE}
+```{r echo=TRUE,warning=FALSE,message=FALSE,include=FALSE}
 error_rf<-sqrt(rf$mse[500])
 error_rf
 ```
 
 
-
-
-$R^{2}$ for random regression model. 
-
-
-```{r echo=TRUE,warning=FALSE,message=FALSE}
+```{r echo=TRUE,warning=FALSE,message=FALSE,include=FALSE}
 R2<-rf$rsq[500]
 R2
 ```
 
-$R^{2}$ value of 0.136 also indicate that in contrary to multiple linear regression model 13% of variances in the dependent variables are explained by independent predictors in random forest model.
+|RMSE|MAE|$R^2$|p-value|
+|:----------:|:------------------|:--------------:|:------------:|
+|472281.1 |400426.8|0.1355375|2.095769e-22|
+
+
+### Results and Discussion:
+
+Sales per week for different are influenced by several factors, as found in this study there are sales hike during holidays. Unemployment and temperature affect sales negatively whereas CPI influence is positive. 
+
+The model comparision summarization table is:
+
+|Model Name |RMSE|MAE|$R^2$|p-value|
+|:-------------------:|:----------:|:------------------|:--------------:|:------------:|
+|MLR|655051| 561616.5|0.04105873	|1.1478e-30|
+|RF|472281.1 |400426.8|0.1355375|7.70231e-22|
+                               Table 2: Compression table of MLR and RF.
+
+Higher RMSE and MAE for MLR model indicate better performance for RF algorithm. For MLR model a $R^2$ value of 0.041 indicates that the model can only explain 4% variation in the dependent variable which is not reliable to explain our dependent variable. Similarly for RF $R^2$ value of 0.14 indicates that 13% variation of dependent variable can be explained by the model which is of course better than MLR. BOth the models are statistically significant as the p-value is much lower than typical 0.05. 
 
 
 
-###36.2.5 Conclusion:
+### Conclusion:
 
-From my whole study a comparison matrix  can be built as:
-
-
-$$\begin{bmatrix}
-Names & RMSE &MAE&R^{2}\\
-MLR& 655051 &561616.5 &0.0167\\
-RF& 488663.3 & 409985& 0.1312953
-\end{bmatrix}$$
+Sales increases during holidays whereas on hot days sales tend to decrease, also if in the area of the store, people unemployment rate is higher sales are likely to go down. Among fitted models LR performed better than MLR with higher $R^2$ and lower RMSE and MAE. 
 
 
-From comparison matrix one can easily depict that all the error statistics are better for RF model than MLR. Also $R^2$ value 0.13 is greater for RF model than 0.0167 which means for RF model can explain 13% variation in the dependent variable whereas MLR can only 1.7%. For any study related to model selection for predicting any retail outcome RF model can give better result than MLR. Although MLR is advanced with less run time than RF as RF runs on creating several modeling trees and summarize them.
-
-
-### 36.2.6	Data and software availability:
+###	Data and software availability:
 
 Here Walmart retail data (https://www.kaggle.com/datasets/aditya6196/retail-analysis-with-walmart-data?resource=download) was used for the analysis. 
 
 and all the analyses were conducted using R-Studio. Link to download the software is (https://cran.r-project.org/bin/windows/base/R-4.2.2-win.exe).
 
 
-### 36.2.7	References
+###	References
 
-1) Huan Zhang, Pengbao Wu, Aijing Yin, Xiaohui Yang, Ming Zhang, Chao Gao, Prediction of soil organic carbon in an intensively managed reclamation zone of eastern China: A comparison of multiple linear regressions and the random forest model, Science of The Total Environment, Volume 592,2017,Pages 704-713,ISSN 0048-9697,https://doi.org/10.1016/j.scitotenv.2017.02.146.
-
-
-2) Xuefeng Xie, Tao Wu, Ming Zhu, Guojun Jiang, Yan Xu, Xiaohan Wang, Lijie Pu,
-Comparison of random forest and multiple linear regression models for estimation of soil extracellular enzyme activities in agricultural reclaimed coastal saline land, Ecological Indicators, Volume 120,2021,106925,ISSN 1470-160X,https://doi.org/10.1016/j.ecolind.2020.106925.
+<li> 1) Huan Zhang, Pengbao Wu, Aijing Yin, Xiaohui Yang, Ming Zhang, Chao Gao, 2017. "Prediction of soil organic carbon in an intensively managed reclamation zone of eastern China: A comparison of multiple linear regressions and the random forest model, Science of The Total Environment", Volume 592,2017,Pages 704-713,ISSN 0048-9697,https://doi.org/10.1016/j.scitotenv.2017.02.146. </li>
 
 
-3) Huang, Li-Ying, Fang-Yu Chen, Mao-Jhen Jhou, Chun-Heng Kuo, Chung-Ze Wu, Chieh-Hua Lu, Yen-Lin Chen, Dee Pei, Yu-Fang Cheng, and Chi-Jie Lu. 2022. "Comparing Multiple Linear Regression and Machine Learning in Predicting Diabetic Urine Albumin–Creatinine Ratio in a 4-Year Follow-Up Study" Journal of Clinical Medicine 11, no. 13: 3661. https://doi.org/10.3390/jcm11133661
+<li> 2) Xuefeng Xie, Tao Wu, Ming Zhu, Guojun Jiang, Yan Xu, Xiaohan Wang, Lijie Pu, 2021. "Comparison of random forest and multiple linear regression models for estimation of soil extracellular enzyme activities in agricultural reclaimed coastal saline land, Ecological Indicators", Volume 120,2021,106925,ISSN 1470-160X,https://doi.org/10.1016/j.ecolind.2020.106925. </li>
+
+
+<li> 3) Huang, Li-Ying, Fang-Yu Chen, Mao-Jhen Jhou, Chun-Heng Kuo, Chung-Ze Wu, Chieh-Hua Lu, Yen-Lin Chen, Dee Pei, Yu-Fang Cheng, and Chi-Jie Lu. 2022. "Comparing Multiple Linear Regression and Machine Learning in Predicting Diabetic Urine Albumin–Creatinine Ratio in a 4-Year Follow-Up Study" Journal of Clinical Medicine 11, no. 13: 3661. https://doi.org/10.3390/jcm11133661 </li>
+
+<li> 4) Phan Thanh Noi, ORCID,Jan Degener, Martin Kappas. 2017 "Comparison of Multiple Linear Regression, Cubist Regression, and Random Forest Algorithms to Estimate Daily Air Surface Temperature from Dynamic Combinations of MODIS LST Data" Remote Sens. 2017, 9(5), 398; https://doi.org/10.3390/rs9050398 </li>
