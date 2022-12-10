@@ -3,8 +3,8 @@ title: "Comparision of Multiple Linear Regression model and Random Forest althor
 author: "Sushmitha Tharla & Shravya Rani Damarapelli"
 date: '2022-12-09'
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
   word_document: default
 ---
 
